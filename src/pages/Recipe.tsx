@@ -134,6 +134,20 @@ export default function Recipe() {
                   min={0}
                   step={stepForUnit(String(i.unit))}
                   value={Number(displayValue)}
+                  formatter={(v) => {
+                    if (v == null) return ''
+                    const s = String(v)
+                    if (!s.includes('.')) return s
+                    return s
+                      .replace(/(\.\d*?[1-9])0+$/, '$1')
+                      .replace(/\.0+$/, '')
+                      .replace(/\.$/, '')
+                  }}
+                  parser={(v) => {
+                    if (!v) return '' as unknown as number
+                    const s = v.replace(/[^0-9.\-]/g, '')
+                    return s as unknown as number
+                  }}
                   onChange={(v) => setEditing((prev) => ({ ...prev, [i.id]: v == null ? '' : String(v) }))}
                   onBlur={(e) => commitQty((e.target as HTMLInputElement).value === '' ? null : parseFloat((e.target as HTMLInputElement).value))}
                   onKeyDown={(e) => {

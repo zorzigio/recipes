@@ -20,8 +20,9 @@ function pluralize(word: string, qty: number) {
 
 export function formatQuantity(qty: number, unit: string) {
   const rounded = roundForUnit(qty, unit)
-  const isInt = Number.isInteger(rounded)
-  const qtyStr = isInt ? String(rounded) : String(rounded)
+  const qtyStr = Number.isInteger(rounded)
+    ? String(rounded)
+    : String(Number(rounded.toFixed(3))).replace(/\.0+$/, '')
   const unitStr = rounded === 1 ? unit : pluralize(unit, rounded)
   return unit ? `${qtyStr} ${unitStr}` : qtyStr
 }
