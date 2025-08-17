@@ -1,6 +1,7 @@
 import { Outlet, Link, NavLink, useLocation } from 'react-router-dom'
 import { ThemeToggle } from './components/ThemeToggle'
 import { Layout, Menu, Typography } from 'antd'
+import { AppFooter } from './components/AppFooter'
 const { Header, Content } = Layout
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
           <Outlet />
         </div>
       </Content>
+      <AppFooter />
     </Layout>
   )
 }
