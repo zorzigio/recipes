@@ -4,7 +4,7 @@ const recipe: Recipe = {
   id: 'ragu-bolognese',
   title: 'Ragù alla Bolognese',
   description: 'Classic slow-cooked meat sauce from Bologna, perfect with tagliatelle.',
-  image: '/images/bolognese.png',
+  image: '/images/ragu-alla-bolognese.png',
   tags: ['Italian', 'pasta', 'slow-cook'],
   baseServings: 4,
   totalMinutes: 180,

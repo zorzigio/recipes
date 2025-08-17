@@ -4,7 +4,7 @@ const recipe: Recipe = {
   id: 'pasta-ragu',
   title: 'Pasta with Ragù',
   description: 'Tagliatelle tossed with rich Bolognese ragù and Parmesan.',
-  image: '/images/pasta.jpg',
+  image: '/images/pasta-con-ragu.png',
   tags: ['Italian', 'pasta'],
   baseServings: 4,
   totalMinutes: 20,
