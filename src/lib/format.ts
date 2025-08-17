@@ -3,11 +3,13 @@ import { IngredientLine } from './schema'
 const countUnits = new Set(['piece', 'clove', 'slice', 'unit'])
 const metricUnits = new Set(['g', 'ml'])
 const volumetricUnits = new Set(['tsp', 'tbsp', 'cup'])
+const nonPluralUnits = new Set(['g', 'kg', 'ml', 'l', 'tsp', 'tbsp'])
 
 function roundForUnit(value: number, unit: string) {
-  if (countUnits.has(unit)) return Math.round(value)
-  if (metricUnits.has(unit)) return Math.round(value * 10) / 10
-  if (volumetricUnits.has(unit)) return Math.round(value * 4) / 4
+  const u = unit.toLowerCase()
+  if (countUnits.has(u)) return Math.round(value)
+  if (metricUnits.has(u)) return Math.round(value * 10) / 10
+  if (volumetricUnits.has(u)) return Math.round(value * 4) / 4
   return Math.round(value * 10) / 10
 }
 
@@ -19,12 +21,13 @@ function pluralize(word: string, qty: number) {
 }
 
 export function formatQuantity(qty: number, unit: string) {
-  const rounded = roundForUnit(qty, unit)
+  const u = unit.toLowerCase()
+  const rounded = roundForUnit(qty, u)
   const qtyStr = Number.isInteger(rounded)
     ? String(rounded)
     : String(Number(rounded.toFixed(3))).replace(/\.0+$/, '')
-  const unitStr = rounded === 1 ? unit : pluralize(unit, rounded)
-  return unit ? `${qtyStr} ${unitStr}` : qtyStr
+  const unitStr = nonPluralUnits.has(u) ? u : (rounded === 1 ? u : pluralize(u, rounded))
+  return u ? `${qtyStr} ${unitStr}` : qtyStr
 }
 
 export function formatIngredient(i: IngredientLine) {

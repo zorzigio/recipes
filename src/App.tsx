@@ -9,11 +9,11 @@ export default function App() {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Header style={{ borderBottom: '1px solid var(--border)', background: 'transparent', paddingInline: 0 }}>
-        <div className="container flex items-center justify-between py-2 gap-4">
+        <div className="container flex items-center justify-between py-2 gap-2">
           <Typography.Title level={4} style={{ margin: 0 }}>
             <Link to="/">Recipes</Link>
           </Typography.Title>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Menu
               mode="horizontal"
               selectedKeys={[selectedKey]}

@@ -5,7 +5,7 @@ import type { Recipe as RecipeType } from '@/lib/schema'
 import { saveServings, scaleIngredients, replaceStepTokens, servingsFromStorage, scaleQuantity } from '@/lib/scale'
 import { formatIngredient, formatQuantity } from '@/lib/format'
 import recipesSeed from '@/data/recipes.json'
-import { Button, InputNumber, Typography, Tag, Divider, Space, App as AntdApp, Modal, QRCode } from 'antd'
+import { Button, InputNumber, Typography, Tag, Divider, Space, App as AntdApp, Modal, QRCode, Dropdown } from 'antd'
 import { useLocation } from 'react-router-dom'
 
 export default function Recipe() {
@@ -70,6 +70,29 @@ export default function Recipe() {
     window.print()
   }
 
+  const actionItems = [
+    { key: 'copy', label: 'Copy ingredients' },
+    { key: 'print', label: 'Print' },
+    { type: 'divider' as const },
+    { key: 'qr', label: 'QR code' },
+  ]
+
+  const onActionClick = (info: any) => {
+    switch (info?.key) {
+      case 'copy':
+        void copyIngredients()
+        break
+      case 'print':
+        printRecipe()
+        break
+      case 'qr':
+        setQrOpen(true)
+        break
+      default:
+        break
+    }
+  }
+
   return (
     <article className="space-y-4">
       <header className="flex items-start gap-4">
@@ -110,15 +133,22 @@ export default function Recipe() {
         </div>
       </header>
 
-      <section className="flex items-center gap-2" aria-live="polite">
+      <section className="flex flex-wrap items-center gap-2" aria-live="polite">
         <label className="text-sm">Servings</label>
         <InputNumber min={0.25} step={0.25} value={servings} onChange={(v) => setServings(Number(v) || 1)} />
         <Button onClick={() => setServings((s) => Math.max(0.25, Math.round((s - 0.5) * 100) / 100))}>-</Button>
         <Button onClick={() => setServings((s) => Math.round((s + 0.5) * 100) / 100)}>+</Button>
-        <div className="ml-auto flex gap-2">
-          <Button onClick={copyIngredients}>Copy ingredients</Button>
-          <Button onClick={printRecipe}>Print</Button>
-          <Button onClick={() => setQrOpen(true)}>QR code</Button>
+        <div className="flex gap-2 w-full sm:w-auto sm:ml-auto justify-start sm:justify-end">
+          <div className="hidden sm:flex gap-2">
+            <Button onClick={copyIngredients}>Copy ingredients</Button>
+            <Button onClick={printRecipe}>Print</Button>
+            <Button onClick={() => setQrOpen(true)}>QR code</Button>
+          </div>
+          <div className="sm:hidden">
+            <Dropdown menu={{ items: actionItems as any, onClick: onActionClick }} trigger={["click"]}>
+              <Button>Actions</Button>
+            </Dropdown>
+          </div>
         </div>
       </section>
 
