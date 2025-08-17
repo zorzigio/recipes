@@ -5,6 +5,7 @@ import type { Recipe as RecipeType } from '@/lib/schema'
 import { saveServings, scaleIngredients, replaceStepTokens, servingsFromStorage, scaleQuantity } from '@/lib/scale'
 import { formatIngredient, formatQuantity } from '@/lib/format'
 import recipesSeed from '@/data/recipes.json'
+import { Button, InputNumber, Typography, Tag, Divider, Space } from 'antd'
 
 export default function Recipe() {
   const { id = '' } = useParams()
@@ -49,32 +50,32 @@ export default function Recipe() {
       <header className="flex items-start gap-4">
         {recipe.image && <img src={recipe.image} alt="" className="w-40 h-40 object-cover rounded" />}
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold">{recipe.title}</h1>
-          {recipe.description && <p className="text-muted-foreground">{recipe.description}</p>}
+          <Typography.Title level={2} style={{ marginTop: 0 }}>{recipe.title}</Typography.Title>
+          {recipe.description && <Typography.Paragraph type="secondary">{recipe.description}</Typography.Paragraph>}
           <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
-            {recipe.tags.map((t) => <span key={t} className="px-2 py-0.5 border rounded-full">{t}</span>)}
+            {recipe.tags.map((t) => <Tag key={t}>{t}</Tag>)}
           </div>
-          <div className="text-sm text-muted-foreground">
+          <Typography.Text type="secondary">
             {recipe.totalMinutes ? `${recipe.totalMinutes} min • ` : ''}
             {recipe.difficulty ? `${recipe.difficulty} • ` : ''}
             base {recipe.baseServings} servings
-          </div>
+          </Typography.Text>
         </div>
       </header>
 
       <section className="flex items-center gap-2" aria-live="polite">
         <label className="text-sm">Servings</label>
-        <input type="number" className="border rounded px-2 py-1 w-20" min={0.25} step={0.25} value={servings} onChange={(e) => setServings(parseFloat(e.target.value) || 1)} />
-        <button className="border rounded px-3 py-1" onClick={() => setServings((s) => Math.max(0.25, Math.round((s - 0.5) * 100) / 100))}>-</button>
-        <button className="border rounded px-3 py-1" onClick={() => setServings((s) => Math.round((s + 0.5) * 100) / 100)}>+</button>
+        <InputNumber min={0.25} step={0.25} value={servings} onChange={(v) => setServings(Number(v) || 1)} />
+        <Button onClick={() => setServings((s) => Math.max(0.25, Math.round((s - 0.5) * 100) / 100))}>-</Button>
+        <Button onClick={() => setServings((s) => Math.round((s + 0.5) * 100) / 100)}>+</Button>
         <div className="ml-auto flex gap-2">
-          <button className="border rounded px-3 py-1" onClick={copyIngredients}>Copy ingredients</button>
-          <button className="border rounded px-3 py-1" onClick={printRecipe}>Print</button>
+          <Button onClick={copyIngredients}>Copy ingredients</Button>
+          <Button onClick={printRecipe}>Print</Button>
         </div>
       </section>
 
       <section>
-        <h2 className="font-semibold mb-2">Ingredients</h2>
+        <Typography.Title level={4}>Ingredients</Typography.Title>
         <ul className="space-y-2">
           {scaled!.ing.map((i) => {
             const base = recipe.ingredients.find((b) => b.id === i.id)!
@@ -103,16 +104,13 @@ export default function Recipe() {
             return (
               <li key={i.id} className="flex items-center gap-3">
                 <label htmlFor={inputId} className="sr-only">{i.name} quantity</label>
-                <input
+                <InputNumber
                   id={inputId}
-                  type="number"
                   min={0}
                   step={stepForUnit(String(i.unit))}
-                  className="w-28 border rounded px-2 py-1"
-                  value={displayValue}
-                  inputMode="decimal"
-                  onChange={(e) => setEditing((prev) => ({ ...prev, [i.id]: e.target.value }))}
-                  onBlur={(e) => commitQty(e.target.value === '' ? null : parseFloat(e.target.value))}
+                  value={Number(displayValue)}
+                  onChange={(v) => setEditing((prev) => ({ ...prev, [i.id]: v == null ? '' : String(v) }))}
+                  onBlur={(e) => commitQty((e.target as HTMLInputElement).value === '' ? null : parseFloat((e.target as HTMLInputElement).value))}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault()
@@ -142,7 +140,7 @@ export default function Recipe() {
       </section>
 
       <section>
-        <h2 className="font-semibold mb-2">Steps</h2>
+        <Typography.Title level={4}>Steps</Typography.Title>
         <ol className="list-decimal pl-6 space-y-2">
           {recipe.steps.map((s) => (
             <li key={s.order}>{replaceStepTokens(s.text, recipe.baseServings, servings)}</li>

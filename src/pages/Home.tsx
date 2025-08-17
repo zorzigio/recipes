@@ -4,6 +4,7 @@ import { filterAndSort, type Filters } from '@/lib/search'
 import type { Recipe } from '@/lib/schema'
 import recipesSeed from '@/data/recipes.json'
 import { Link } from 'react-router-dom'
+import { Input, Select, Button, Tag, Card, Typography, Space } from 'antd'
 
 function useDebounced<T>(value: T, delay = 200) {
   const [v, setV] = useState(value)
@@ -43,46 +44,45 @@ export default function Home() {
 
   return (
     <div className="space-y-4">
-      <section className="grid gap-2 md:grid-cols-3">
-        <input
-          className="border rounded px-3 py-2"
+      <section className="grid gap-3 md:grid-cols-3">
+        <Input
           placeholder="Search recipes..."
           value={filters.q}
           onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))}
           aria-label="Search free text"
         />
-        <select multiple className="border rounded px-3 py-2 min-h-[2.5rem]" value={filters.tags} onChange={(e) => {
-          const opts = Array.from(e.target.selectedOptions).map((o) => o.value)
-          setFilters((f) => ({ ...f, tags: opts }))
-        }} aria-label="Filter by tags">
-          {uniqueTags.map((t) => (
-            <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
-        <input
-          className="border rounded px-3 py-2"
+        <Select
+          mode="multiple"
+          placeholder="Filter by tags"
+          value={filters.tags}
+          onChange={(opts) => setFilters((f) => ({ ...f, tags: opts }))}
+          options={uniqueTags.map((t) => ({ value: t, label: t }))}
+          aria-label="Filter by tags"
+        />
+        <Input
           placeholder="Ingredients (comma-separated)"
           value={filters.ingredients.join(', ')}
           onChange={(e) => setFilters((f) => ({ ...f, ingredients: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) }))}
           aria-label="Filter by ingredients"
         />
-        <div className="col-span-full flex items-center gap-2 text-sm">
-          <button className="border rounded px-3 py-1" onClick={() => setFilters({ tags: [], ingredients: [], q: '' })}>Reset</button>
+        <div className="col-span-full flex items-center gap-3 text-sm">
+          <Button onClick={() => setFilters({ tags: [], ingredients: [], q: '' })}>Reset</Button>
           <span aria-live="polite">{results.length} results {elapsed ? `( ${Math.round(elapsed)} ms )` : ''}</span>
         </div>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {results.map((r) => (
-          <Link key={r.id} to={`/recipe/${r.id}`} className="rounded border overflow-hidden hover:shadow">
-            {r.image && <img src={r.image} alt="" className="w-full h-40 object-cover" />}
-            <div className="p-3 space-y-2">
-              <h3 className="font-semibold">{r.title}</h3>
-              {r.description && <p className="text-sm text-muted-foreground line-clamp-2">{r.description}</p>}
-              <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
-                {r.tags.map((t) => <span key={t} className="px-2 py-0.5 border rounded-full">{t}</span>)}
-              </div>
-            </div>
+          <Link key={r.id} to={`/recipe/${r.id}`}>
+            <Card hoverable cover={r.image ? <img src={r.image} alt="" style={{ height: 160, objectFit: 'cover' }} /> : undefined}>
+              <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                <Typography.Title level={5} style={{ margin: 0 }}>{r.title}</Typography.Title>
+                {r.description && <Typography.Paragraph type="secondary" ellipsis={{ rows: 2 }}>{r.description}</Typography.Paragraph>}
+                <div className="flex flex-wrap gap-1">
+                  {r.tags.map((t) => <Tag key={t}>{t}</Tag>)}
+                </div>
+              </Space>
+            </Card>
           </Link>
         ))}
         {results.length === 0 && (
