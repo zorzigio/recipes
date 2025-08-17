@@ -3,7 +3,7 @@ import { getAllRecipes, seedIfEmpty } from '@/lib/db'
 import { filterAndSort, type Filters } from '@/lib/search'
 import type { Recipe } from '@/lib/schema'
 import recipesSeed from '@/data/recipes.json'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Input, Select, Button, Tag, Card, Typography, Space } from 'antd'
 
 function useDebounced<T>(value: T, delay = 200) {
@@ -16,6 +16,8 @@ function useDebounced<T>(value: T, delay = 200) {
 }
 
 export default function Home() {
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [filters, setFilters] = useState<Filters>(() => {
     try {
@@ -38,6 +40,19 @@ export default function Home() {
     try { localStorage.setItem('filters', JSON.stringify(filters)) } catch { }
   }, [filters])
 
+  // Sync tags from URL (?tag=foo&tag=bar or ?tags=foo,bar)
+  useEffect(() => {
+    const tagsFromParams = searchParams.getAll('tag')
+    const tagsCsv = searchParams.get('tags')
+    const tagsExtra = tagsCsv ? tagsCsv.split(',').map((s) => s.trim()).filter(Boolean) : []
+    const nextTags = Array.from(new Set([...tagsFromParams, ...tagsExtra]))
+    if (nextTags.length === 0) return
+    const current = filters.tags
+    const same = current.length === nextTags.length && current.every((t, i) => t === nextTags[i])
+    if (!same) setFilters((f) => ({ ...f, tags: nextTags }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
   const { results, elapsed } = useMemo(() => filterAndSort(recipes, { ...filters, q: qDebounced }), [recipes, filters, qDebounced])
 
   const uniqueTags = useMemo(() => Array.from(new Set(recipes.flatMap((r) => r.tags))).sort(), [recipes])
@@ -55,7 +70,12 @@ export default function Home() {
           mode="multiple"
           placeholder="Filter by tags"
           value={filters.tags}
-          onChange={(opts) => setFilters((f) => ({ ...f, tags: opts }))}
+          onChange={(opts) => {
+            setFilters((f) => ({ ...f, tags: opts }))
+            const qs = new URLSearchParams()
+            opts.forEach((t) => qs.append('tag', t))
+            navigate(`/?${qs.toString()}`)
+          }}
           options={uniqueTags.map((t) => ({ value: t, label: t }))}
           aria-label="Filter by tags"
         />
@@ -66,7 +86,7 @@ export default function Home() {
           aria-label="Filter by ingredients"
         />
         <div className="col-span-full flex items-center gap-3 text-sm">
-          <Button onClick={() => setFilters({ tags: [], ingredients: [], q: '' })}>Reset</Button>
+          <Button onClick={() => { setFilters({ tags: [], ingredients: [], q: '' }); navigate('/') }}>Reset</Button>
           <span aria-live="polite">{results.length} results {elapsed ? `( ${Math.round(elapsed)} ms )` : ''}</span>
         </div>
       </section>
@@ -79,7 +99,31 @@ export default function Home() {
                 <Typography.Title level={5} style={{ margin: 0 }}>{r.title}</Typography.Title>
                 {r.description && <Typography.Paragraph type="secondary" ellipsis={{ rows: 2 }}>{r.description}</Typography.Paragraph>}
                 <div className="flex flex-wrap gap-1">
-                  {r.tags.map((t) => <Tag key={t}>{t}</Tag>)}
+                  {r.tags.map((t) => {
+                    const active = filters.tags.includes(t)
+                    return (
+                      <Tag
+                        key={t}
+                        color={active ? 'blue' : undefined}
+                        bordered={!active}
+                        style={{ cursor: 'pointer' }}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setFilters((f) => {
+                            const exists = f.tags.includes(t)
+                            const next = exists ? f.tags.filter((x) => x !== t) : [...f.tags, t]
+                            const qs = new URLSearchParams()
+                            next.forEach((tg) => qs.append('tag', tg))
+                            navigate(`/?${qs.toString()}`)
+                            return { ...f, tags: next }
+                          })
+                        }}
+                      >
+                        {t}
+                      </Tag>
+                    )
+                  })}
                 </div>
               </Space>
             </Card>

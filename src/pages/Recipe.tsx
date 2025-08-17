@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { getRecipe, seedIfEmpty } from '@/lib/db'
 import type { Recipe as RecipeType } from '@/lib/schema'
 import { saveServings, scaleIngredients, replaceStepTokens, servingsFromStorage, scaleQuantity } from '@/lib/scale'
@@ -10,6 +10,9 @@ import { useLocation } from 'react-router-dom'
 
 export default function Recipe() {
   const { message } = AntdApp.useApp()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTags = new Set<string>([...searchParams.getAll('tag'), ...(searchParams.get('tags')?.split(',').map((s) => s.trim()).filter(Boolean) ?? [])])
   const location = useLocation()
   const [qrOpen, setQrOpen] = useState(false)
   const { id = '' } = useParams()
@@ -24,13 +27,26 @@ export default function Recipe() {
       .then((r) => {
         if (!r) return
         setRecipe(r)
-        setServings(servingsFromStorage(r.id, r.baseServings))
+        const fromUrl = parseFloat((searchParams.get('servings') ?? '').trim())
+        const initial = Number.isFinite(fromUrl) && fromUrl > 0
+          ? fromUrl
+          : servingsFromStorage(r.id, r.baseServings)
+        setServings(initial)
       })
   }, [id])
 
   useEffect(() => {
     if (recipe) saveServings(recipe.id, servings)
   }, [recipe, servings])
+
+  // Keep servings reflected in URL without losing existing params
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams)
+    const val = String(Number(servings.toFixed(3)))
+    next.set('servings', val)
+    setSearchParams(next, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [servings])
 
   const scaled = useMemo(() => {
     if (!recipe) return null
@@ -62,7 +78,29 @@ export default function Recipe() {
           <Typography.Title level={2} style={{ marginTop: 0 }}>{recipe.title}</Typography.Title>
           {recipe.description && <Typography.Paragraph type="secondary">{recipe.description}</Typography.Paragraph>}
           <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
-            {recipe.tags.map((t) => <Tag key={t}>{t}</Tag>)}
+            {recipe.tags.map((t) => (
+              <Tag
+                key={t}
+                color={activeTags.has(t) ? 'blue' : undefined}
+                bordered={!activeTags.has(t)}
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  const next = new URLSearchParams(searchParams)
+                  const current = next.getAll('tag')
+                  if (activeTags.has(t)) {
+                    // remove t
+                    const filtered = current.filter((x) => x !== t)
+                    next.delete('tag')
+                    filtered.forEach((x) => next.append('tag', x))
+                  } else {
+                    next.append('tag', t)
+                  }
+                  navigate(`/?${next.toString()}`)
+                }}
+              >
+                {t}
+              </Tag>
+            ))}
           </div>
           <Typography.Text type="secondary">
             {recipe.totalMinutes ? `${recipe.totalMinutes} min • ` : ''}
@@ -92,10 +130,28 @@ export default function Recipe() {
         centered
       >
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <QRCode value={typeof window !== 'undefined' ? window.location.href : location.pathname} size={200} />
+          {(() => {
+            const href = typeof window !== 'undefined' ? window.location.href : location.pathname
+            try {
+              const url = new URL(href, typeof window !== 'undefined' ? window.location.origin : 'http://localhost')
+              url.searchParams.set('servings', String(Number(servings.toFixed(3))))
+              return <QRCode value={url.toString()} size={200} />
+            } catch {
+              return <QRCode value={href} size={200} />
+            }
+          })()}
         </div>
         <Typography.Paragraph type="secondary" style={{ marginTop: 12, textAlign: 'center' }}>
-          {typeof window !== 'undefined' ? window.location.href : location.pathname}
+          {(() => {
+            const href = typeof window !== 'undefined' ? window.location.href : location.pathname
+            try {
+              const url = new URL(href, typeof window !== 'undefined' ? window.location.origin : 'http://localhost')
+              url.searchParams.set('servings', String(Number(servings.toFixed(3))))
+              return url.toString()
+            } catch {
+              return href
+            }
+          })()}
         </Typography.Paragraph>
       </Modal>
 
