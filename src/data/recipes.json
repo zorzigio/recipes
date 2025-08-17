@@ -41,17 +41,17 @@
     "totalMinutes": 40,
     "difficulty": "easy",
     "ingredients": [
-      { "id": "espresso", "name": "strong espresso, cooled", "quantity": 300, "unit": "ml" },
-      { "id": "ladyfingers", "name": "savoiardi (ladyfingers)", "quantity": 250, "unit": "g" },
+  { "id": "espresso", "name": "unsweetened coffee, cooled", "quantity": 300, "unit": "ml" },
+  { "id": "ladyfingers", "name": "savoiardi (ladyfingers)", "quantity": 300, "unit": "g" },
       { "id": "mascarpone", "name": "mascarpone", "quantity": 500, "unit": "g" },
       { "id": "eggs", "name": "eggs, separated", "quantity": 4, "unit": "piece" },
       { "id": "sugar", "name": "caster sugar", "quantity": 100, "unit": "g" },
-      { "id": "cocoa", "name": "unsweetened cocoa powder", "quantity": 2, "unit": "tbsp" }
+  { "id": "cocoa", "name": "unsweetened cocoa powder", "quantity": 2, "unit": "tbsp" }
     ],
     "steps": [
-      { "order": 1, "text": "Beat yolks with {q:100,u:\"g\",n:\"caster sugar\"} until pale; fold in {q:500,u:\"g\",n:\"mascarpone\"}. Whip whites to soft peaks and fold in." },
-      { "order": 2, "text": "Dip {q:250,u:\"g\",n:\"savoiardi (ladyfingers)\"} briefly in {q:300,u:\"ml\",n:\"strong espresso\"}; layer with mascarpone cream." },
-      { "order": 3, "text": "Repeat layers; chill at least 4 hours. Dust with {q:2,u:\"tbsp\",n:\"unsweetened cocoa powder\"} before serving." }
+  { "order": 1, "text": "Separate eggs. Whisk yolks with {q:100,u:\"g\",n:\"caster sugar\"} until light and foamy, then blend in {q:500,u:\"g\",n:\"mascarpone\"}. In a clean bowl whip whites to stiff peaks and gently fold into the cream." },
+  { "order": 2, "text": "Spread a thin layer of cream on the bottom of a ~20x20 cm dish. Quickly dip {q:300,u:\"g\",n:\"savoiardi (ladyfingers)\"} one by one in {q:300,u:\"ml\",n:\"unsweetened coffee, cooled\"} (do not soak), arrange in a single layer without overlapping, and cover with cream." },
+  { "order": 3, "text": "Add a second layer of dipped savoiardi and finish with the remaining cream. Refrigerate for about 3 hours. Dust with {q:2,u:\"tbsp\",n:\"unsweetened cocoa powder\"} before serving." }
     ],
     "createdAt": "2025-08-17T00:00:00.000Z",
     "updatedAt": "2025-08-17T00:00:00.000Z"
