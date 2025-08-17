@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { getAllRecipes, seedIfEmpty } from '@/lib/db'
 import { filterAndSort, type Filters } from '@/lib/search'
 import type { Recipe } from '@/lib/schema'
-import recipesSeed from '@/data/recipes.json'
+import recipesSeed from '@/data/recipes'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Input, Select, Button, Tag, Card, Typography, Space } from 'antd'
 

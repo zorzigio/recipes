@@ -4,7 +4,7 @@ import { getRecipe, seedIfEmpty } from '@/lib/db'
 import type { Recipe as RecipeType } from '@/lib/schema'
 import { saveServings, scaleIngredients, replaceStepTokens, servingsFromStorage } from '@/lib/scale'
 import { formatIngredient } from '@/lib/format'
-import recipesSeed from '@/data/recipes.json'
+import recipesSeed from '@/data/recipes'
 import { Button, InputNumber, Typography, Tag, App as AntdApp, Modal, QRCode, Dropdown } from 'antd'
 import { useLocation } from 'react-router-dom'
 
