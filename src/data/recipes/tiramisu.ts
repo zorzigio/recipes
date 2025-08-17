@@ -4,7 +4,7 @@ const recipe: Recipe = {
   id: 'tiramisu',
   title: 'Tiramisù',
   description: 'Layers of espresso-soaked ladyfingers and mascarpone cream, dusted with cocoa.',
-  image: '/images/tiramisu.jpg',
+  image: '/images/tiramisu.png',
   tags: ['Italian', 'dessert', 'no-bake'],
   baseServings: 6,
   totalMinutes: 40,

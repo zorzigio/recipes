@@ -35,14 +35,6 @@ export default defineConfig(({ mode }) => ({
             options: {
               cacheName: 'assets-cache'
             }
-          },
-          {
-            urlPattern: /.*\/data\/recipes\.json/,
-            handler: 'StaleWhileRevalidate' as const,
-            options: {
-              cacheName: 'data-cache',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 30 }
-            }
           }
         ]
       }
