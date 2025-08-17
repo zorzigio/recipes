@@ -49,9 +49,19 @@
   { "id": "cocoa", "name": "unsweetened cocoa powder", "quantity": 2, "unit": "tbsp" }
     ],
     "steps": [
-  { "order": 1, "text": "Separate eggs. Whisk yolks with {q:100,u:\"g\",n:\"caster sugar\"} until light and foamy, then blend in {q:500,u:\"g\",n:\"mascarpone\"}. In a clean bowl whip whites to stiff peaks and gently fold into the cream." },
-  { "order": 2, "text": "Spread a thin layer of cream on the bottom of a ~20x20 cm dish. Quickly dip {q:300,u:\"g\",n:\"savoiardi (ladyfingers)\"} one by one in {q:300,u:\"ml\",n:\"unsweetened coffee, cooled\"} (do not soak), arrange in a single layer without overlapping, and cover with cream." },
-  { "order": 3, "text": "Add a second layer of dipped savoiardi and finish with the remaining cream. Refrigerate for about 3 hours. Dust with {q:2,u:\"tbsp\",n:\"unsweetened cocoa powder\"} before serving." }
+      { "order": 1, "text": "Brew {q:300,u:\"ml\",n:\"unsweetened coffee\"} and let it cool completely (cold coffee helps prevent soggy biscuits)." },
+      { "order": 2, "text": "Separate the {q:4,u:\"piece\",n:\"eggs\"} into yolks and whites." },
+      { "order": 3, "text": "Whisk yolks with {q:100,u:\"g\",n:\"caster sugar\"} until the mixture is pale, thick, and airy." },
+      { "order": 4, "text": "Add {q:500,u:\"g\",n:\"mascarpone\"} (slightly softened) to the yolk mixture and mix just until smooth." },
+      { "order": 5, "text": "In a clean bowl, whip the egg whites to stiff peaks." },
+      { "order": 6, "text": "Gently fold the whipped whites into the mascarpone cream, working from bottom to top to keep the mixture fluffy." },
+      { "order": 7, "text": "Spread a thin layer of cream on the bottom of a ~20x20 cm dish to help the first layer adhere." },
+      { "order": 8, "text": "Quickly dip each savoiardo (smooth side) in the cold coffee—just a brief dip—and arrange them in a single layer without overlapping." },
+      { "order": 9, "text": "Cover the biscuits with a generous layer of cream, smoothing the surface." },
+      { "order": 10, "text": "Repeat with a second layer of briefly dipped savoiardi." },
+      { "order": 11, "text": "Finish with the remaining cream and level the top." },
+      { "order": 12, "text": "Refrigerate for about 3 hours (longer rest improves texture and flavor)." },
+      { "order": 13, "text": "Just before serving, dust the surface evenly with {q:2,u:\"tbsp\",n:\"unsweetened cocoa powder\"}." }
     ],
     "createdAt": "2025-08-17T00:00:00.000Z",
     "updatedAt": "2025-08-17T00:00:00.000Z"
