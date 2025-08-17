@@ -5,9 +5,13 @@ import type { Recipe as RecipeType } from '@/lib/schema'
 import { saveServings, scaleIngredients, replaceStepTokens, servingsFromStorage, scaleQuantity } from '@/lib/scale'
 import { formatIngredient, formatQuantity } from '@/lib/format'
 import recipesSeed from '@/data/recipes.json'
-import { Button, InputNumber, Typography, Tag, Divider, Space } from 'antd'
+import { Button, InputNumber, Typography, Tag, Divider, Space, App as AntdApp, Modal, QRCode } from 'antd'
+import { useLocation } from 'react-router-dom'
 
 export default function Recipe() {
+  const { message } = AntdApp.useApp()
+  const location = useLocation()
+  const [qrOpen, setQrOpen] = useState(false)
   const { id = '' } = useParams()
   const [recipe, setRecipe] = useState<RecipeType | null>(null)
   const [servings, setServings] = useState<number>(0)
@@ -37,8 +41,13 @@ export default function Recipe() {
   if (!recipe) return <div>Loading…</div>
 
   const copyIngredients = async () => {
-    const text = scaled!.ing.map((i) => formatIngredient(i)).join('\n')
-    await navigator.clipboard.writeText(text)
+    try {
+      const text = scaled!.ing.map((i) => formatIngredient(i)).join('\n')
+      await navigator.clipboard.writeText(text)
+      message.success('Ingredients copied to clipboard')
+    } catch (e) {
+      message.error('Failed to copy ingredients')
+    }
   }
 
   const printRecipe = () => {
@@ -71,8 +80,24 @@ export default function Recipe() {
         <div className="ml-auto flex gap-2">
           <Button onClick={copyIngredients}>Copy ingredients</Button>
           <Button onClick={printRecipe}>Print</Button>
+          <Button onClick={() => setQrOpen(true)}>QR code</Button>
         </div>
       </section>
+
+      <Modal
+        open={qrOpen}
+        onCancel={() => setQrOpen(false)}
+        footer={null}
+        title="Scan to open"
+        centered
+      >
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <QRCode value={typeof window !== 'undefined' ? window.location.href : location.pathname} size={200} />
+        </div>
+        <Typography.Paragraph type="secondary" style={{ marginTop: 12, textAlign: 'center' }}>
+          {typeof window !== 'undefined' ? window.location.href : location.pathname}
+        </Typography.Paragraph>
+      </Modal>
 
       <section>
         <Typography.Title level={4}>Ingredients</Typography.Title>
