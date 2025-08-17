@@ -30,10 +30,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build (set base to repo name)
+      - name: Build (supports custom domain via public/CNAME)
         run: |
           REPO_NAME=${GITHUB_REPOSITORY#*/}
-          npm run build -- --base=/$REPO_NAME/
+          if [ -f public/CNAME ]; then
+            echo "Detected public/CNAME. Building with base '/' and copying CNAME."
+            npm run build -- --base=/
+            cp public/CNAME dist/CNAME
+          else
+            echo "No CNAME found. Building with base '/$REPO_NAME/'"
+            npm run build -- --base=/$REPO_NAME/
+          fi
           cp dist/index.html dist/404.html
 
       - name: Upload artifact
