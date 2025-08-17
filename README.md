@@ -12,7 +12,7 @@
 
 ## Notes
 
-- First run seeds IndexedDB from `src/data/recipes.json`.
+- First run seeds IndexedDB from `src/data/recipes.ts`.
 - PWA enabled; works offline after first load.
 - Pages deploy uses base `/recipes_v2/`.
 
