@@ -12,21 +12,24 @@ export default [
   },
   // Base JS recommendations
   js.configs.recommended,
-  // TypeScript recommendations
+  // TypeScript recommendations (flat-config ready)
   ...tseslint.configs.recommended,
-  // React + Hooks recommendations
-  react.configs.recommended,
-  reactHooks.configs.recommended,
-  // Project-specific tweaks
+  // React + Hooks plugin setup with a minimal rule set
   {
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
     settings: {
       react: { version: 'detect' },
     },
-    plugins: {
-      'react-refresh': reactRefresh,
-    },
     rules: {
+      // React core
       'react/react-in-jsx-scope': 'off',
+      // Hooks
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
 ]

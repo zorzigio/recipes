@@ -37,7 +37,9 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    try { localStorage.setItem('filters', JSON.stringify(filters)) } catch { }
+    try { localStorage.setItem('filters', JSON.stringify(filters)) } catch {
+      // ignore localStorage write errors
+    }
   }, [filters])
 
   // Sync tags from URL (?tag=foo&tag=bar or ?tags=foo,bar)

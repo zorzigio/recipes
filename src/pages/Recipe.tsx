@@ -2,10 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { getRecipe, seedIfEmpty } from '@/lib/db'
 import type { Recipe as RecipeType } from '@/lib/schema'
-import { saveServings, scaleIngredients, replaceStepTokens, servingsFromStorage, scaleQuantity } from '@/lib/scale'
-import { formatIngredient, formatQuantity } from '@/lib/format'
+import { saveServings, scaleIngredients, replaceStepTokens, servingsFromStorage } from '@/lib/scale'
+import { formatIngredient } from '@/lib/format'
 import recipesSeed from '@/data/recipes.json'
-import { Button, InputNumber, Typography, Tag, Divider, Space, App as AntdApp, Modal, QRCode, Dropdown } from 'antd'
+import { Button, InputNumber, Typography, Tag, App as AntdApp, Modal, QRCode, Dropdown } from 'antd'
 import { useLocation } from 'react-router-dom'
 
 export default function Recipe() {
@@ -22,7 +22,7 @@ export default function Recipe() {
   const [editing, setEditing] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    seedIfEmpty(async () => recipesSeed as any)
+    seedIfEmpty(async () => recipesSeed as RecipeType[])
       .then(() => getRecipe(id))
       .then((r) => {
         if (!r) return
@@ -61,7 +61,7 @@ export default function Recipe() {
       const text = scaled!.ing.map((i) => formatIngredient(i)).join('\n')
       await navigator.clipboard.writeText(text)
       message.success('Ingredients copied to clipboard')
-    } catch (e) {
+    } catch {
       message.error('Failed to copy ingredients')
     }
   }
@@ -70,14 +70,14 @@ export default function Recipe() {
     window.print()
   }
 
-  const actionItems = [
+  const actionItems: Array<{ key: string; label: string } | { type: 'divider' }> = [
     { key: 'copy', label: 'Copy ingredients' },
     { key: 'print', label: 'Print' },
     { type: 'divider' as const },
     { key: 'qr', label: 'QR code' },
   ]
 
-  const onActionClick = (info: any) => {
+  const onActionClick = (info: { key: string }) => {
     switch (info?.key) {
       case 'copy':
         void copyIngredients()
@@ -145,7 +145,7 @@ export default function Recipe() {
             <Button onClick={() => setQrOpen(true)}>QR code</Button>
           </div>
           <div className="sm:hidden">
-            <Dropdown menu={{ items: actionItems as any, onClick: onActionClick }} trigger={["click"]}>
+            <Dropdown menu={{ items: actionItems, onClick: onActionClick }} trigger={["click"]}>
               <Button>Actions</Button>
             </Dropdown>
           </div>
@@ -231,11 +231,11 @@ export default function Recipe() {
                   }}
                   parser={(v) => {
                     if (!v) return '' as unknown as number
-                    const s = v.replace(/[^0-9.\-]/g, '')
+                    const s = v.replace(/[^0-9.-]/g, '')
                     return s as unknown as number
                   }}
                   onChange={(v) => setEditing((prev) => ({ ...prev, [i.id]: v == null ? '' : String(v) }))}
-                  onBlur={(e) => commitQty((e.target as HTMLInputElement).value === '' ? null : parseFloat((e.target as HTMLInputElement).value))}
+                  onBlur={({ target }) => commitQty((target as HTMLInputElement).value === '' ? null : parseFloat((target as HTMLInputElement).value))}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault()

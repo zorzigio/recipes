@@ -8,7 +8,9 @@ function getPreferredTheme(): Mode {
     try {
       const saved = localStorage.getItem('theme')
       if (saved === 'dark' || saved === 'light') return saved
-    } catch { }
+    } catch {
+      // ignore localStorage read errors
+    }
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     return mq.matches ? 'dark' : 'light'
   }
@@ -30,7 +32,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement
     if (mode === 'dark') root.classList.add('dark')
     else root.classList.remove('dark')
-    try { localStorage.setItem('theme', mode) } catch { }
+    try { localStorage.setItem('theme', mode) } catch {
+      // ignore localStorage write errors
+    }
   }, [mode])
 
   const cfg: ThemeConfig = useMemo(() => ({

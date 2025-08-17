@@ -10,6 +10,8 @@ export const storage = {
   set<T>(key: string, value: T) {
     try {
       localStorage.setItem(key, JSON.stringify(value))
-    } catch {}
+    } catch {
+      // ignore localStorage write errors
+    }
   },
 }

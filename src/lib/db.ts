@@ -51,7 +51,9 @@ export async function seedIfEmpty(fetcher: () => Promise<Recipe[]>) {
         const lsIds = new Set(lsArr.map((r) => r.id))
         const merged = lsArr.concat(toAdd.filter((r) => !lsIds.has(r.id)))
         localStorage.setItem(LS_KEY, JSON.stringify(merged))
-      } catch {}
+      } catch {
+        // ignore JSON/localStorage errors during merge
+      }
     }
   } catch {
     // Fallback to localStorage
@@ -66,7 +68,9 @@ export async function seedIfEmpty(fetcher: () => Promise<Recipe[]>) {
       const ids = new Set(current.map((r) => r.id))
       const merged = current.concat(recipes.filter((r) => !ids.has(r.id)))
       localStorage.setItem(LS_KEY, JSON.stringify(merged))
-    } catch {}
+    } catch {
+      // ignore localStorage errors
+    }
   }
 }
 
@@ -81,7 +85,7 @@ export async function getAllRecipes(): Promise<Recipe[]> {
     try {
       const v = localStorage.getItem(LS_KEY)
       return v ? (JSON.parse(v) as Recipe[]) : []
-    } catch {
+  } catch {
       return []
     }
   }
@@ -99,7 +103,7 @@ export async function getRecipe(id: string): Promise<Recipe | undefined> {
       const v = localStorage.getItem(LS_KEY)
       const arr: Recipe[] = v ? JSON.parse(v) : []
       return arr.find((r) => r.id === id)
-    } catch {
+  } catch {
       return undefined
     }
   }

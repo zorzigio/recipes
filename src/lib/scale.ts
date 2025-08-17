@@ -18,7 +18,7 @@ export function scaleIngredients(list: IngredientLine[], baseServings: number, c
 
 // Replace tokens like {q:100,u:"g",n:"butter"}
 export function replaceStepTokens(text: string, baseServings: number, currentServings: number) {
-  return text.replace(/\{\s*q\s*:\s*([0-9]*\.?[0-9]+)\s*,\s*u\s*:\s*\"([^\"]+)\"\s*,\s*n\s*:\s*\"([^\"]+)\"\s*\}/g, (_m, q, u, n) => {
+  return text.replace(/\{\s*q\s*:\s*([0-9]*\.?[0-9]+)\s*,\s*u\s*:\s*"([^"]+)"\s*,\s*n\s*:\s*"([^"]+)"\s*\}/g, (_m, q, u, n) => {
     const qty = Number(q)
     const scaled = scaleQuantity(qty, baseServings, currentServings)
     const formatted = formatQuantity(scaled, u)
