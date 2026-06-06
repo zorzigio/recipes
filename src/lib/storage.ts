@@ -1,8 +1,11 @@
 export const storage = {
-  get<T>(key: string, fallback: T): T {
+  get<T>(key: string, fallback: T, validate?: (v: unknown) => v is T): T {
     try {
-      const v = localStorage.getItem(key)
-      return v ? (JSON.parse(v) as T) : fallback
+      const raw = localStorage.getItem(key)
+      if (!raw) return fallback
+      const parsed = JSON.parse(raw) as unknown
+      if (validate && !validate(parsed)) return fallback
+      return parsed as T
     } catch {
       return fallback
     }

@@ -1,13 +1,12 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
-import tsconfigPaths from 'vite-tsconfig-paths'
 import { execSync } from 'node:child_process'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  resolve: { tsconfigPaths: true },
   plugins: [
-    tsconfigPaths(),
     react(),
     VitePWA({
       registerType: 'autoUpdate',
@@ -24,8 +23,13 @@ export default defineConfig(({ mode }) => ({
         icons: [
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'maskable-192.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' }
-        ]
+          {
+            src: 'maskable-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
       },
       workbox: {
         runtimeCaching: [
@@ -33,12 +37,12 @@ export default defineConfig(({ mode }) => ({
             urlPattern: ({ url }) => url.origin === self.location.origin,
             handler: 'StaleWhileRevalidate' as const,
             options: {
-              cacheName: 'assets-cache'
-            }
-          }
-        ]
-      }
-    })
+              cacheName: 'assets-cache',
+            },
+          },
+        ],
+      },
+    }),
   ],
   define: (() => {
     const buildTime = new Date().toISOString()
@@ -57,4 +61,16 @@ export default defineConfig(({ mode }) => ({
     }
   })(),
   base: mode === 'production' ? '/recipes_v2/' : '/',
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts'],
+    globals: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/main.tsx', 'src/vite-env.d.ts', 'src/data/**'],
+      thresholds: { lines: 40 },
+    },
+  },
 }))
