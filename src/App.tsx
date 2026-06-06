@@ -1,30 +1,48 @@
-import { Outlet, Link, NavLink, useLocation } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 import { ThemeToggle } from './components/ThemeToggle'
-import { Layout, Menu, Typography } from 'antd'
+import { Layout, Breadcrumb, Typography } from 'antd'
 import { AppFooter } from './components/AppFooter'
+import { UtensilsCrossed } from 'lucide-react'
+
 const { Header, Content } = Layout
 
 export default function App() {
   const location = useLocation()
-  const selectedKey = location.pathname.startsWith('/recipe') ? '/recipe' : '/'
+  const isRecipePage = location.pathname.startsWith('/recipe')
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ borderBottom: '1px solid var(--border)', background: 'transparent', paddingInline: 0 }}>
-        <div className="container flex items-center justify-between py-2 gap-2">
-          <Typography.Title level={4} style={{ margin: 0 }}>
-            <Link to="/">Recipes</Link>
-          </Typography.Title>
-          <div className="flex items-center gap-2">
-            <Menu
-              mode="horizontal"
-              selectedKeys={[selectedKey]}
-              style={{ borderBottom: 'none', background: 'transparent' }}
-              items={[
-                { key: '/', label: <NavLink to="/">Home</NavLink> },
-              ]}
+      <Header
+        style={{
+          borderBottom: '1px solid var(--border)',
+          background: 'var(--background)',
+          paddingInline: 0,
+          height: 52,
+          lineHeight: '52px',
+        }}
+      >
+        <div className="container flex items-center justify-between h-full gap-4">
+          <Link
+            to="/"
+            className="flex items-center gap-2"
+            style={{ textDecoration: 'none' }}
+          >
+            <UtensilsCrossed size={18} strokeWidth={1.75} />
+            <Typography.Title
+              level={5}
+              style={{ margin: 0, lineHeight: 'inherit' }}
+            >
+              Recipes
+            </Typography.Title>
+          </Link>
+
+          {isRecipePage && (
+            <Breadcrumb
+              items={[{ title: <Link to="/">Home</Link> }, { title: 'Recipe' }]}
             />
-            <ThemeToggle />
-          </div>
+          )}
+
+          <ThemeToggle />
         </div>
       </Header>
       <Content>
